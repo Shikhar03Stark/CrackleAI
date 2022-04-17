@@ -12,6 +12,9 @@ app.use(cors());
 app.use(morgan('short'));
 app.use(express.json());
 
+
+//routes
+
 app.get('/', (req, res) => {
     res.status(200).json({
         ok: true,
@@ -44,5 +47,6 @@ app.use((req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`Server listening @${process.env.PORT}`);
+    console.log(`Click : http://localhost:${PORT}`)
 });
 
