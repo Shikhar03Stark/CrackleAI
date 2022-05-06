@@ -1,9 +1,9 @@
-
+import FileUpload from "./components/Video";
 
 function App() {
   return (
     <div>
-     Crackle AI
+      <FileUpload />
     </div>
   );
 }
