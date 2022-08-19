@@ -2,3 +2,4 @@ crackle/
 .env
 __pycache__/
 .cph/
+temp/
