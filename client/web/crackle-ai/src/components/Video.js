@@ -4,6 +4,8 @@ function FileUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isFileSelected, setIsFileSelected] = useState(false);
 
+  const serverURL = "http://localhost:5000/upload";
+
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
 
@@ -11,9 +13,19 @@ function FileUpload() {
   };
 
   const handleSubmission = async () => {
-    if (selectedFile.type && !selectedFile.type.startsWith("video/mp4")) {
-      alert("Please select a video file having mp4 extension");
+    if(isFileSelected) {
+      if (selectedFile.type && !selectedFile.type.startsWith("video/mp4")) {
+        alert("Please select a video file having mp4 extension");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      const response = await fetch(serverURL, {
+        method: "POST",
+        body: formData,
+      });
     }
+    
   };
 
   return (
