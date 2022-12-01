@@ -1,0 +1,12 @@
+.name-background{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px;
+    padding-right: 12px;
+}
+
+.name-greet{
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
+}
