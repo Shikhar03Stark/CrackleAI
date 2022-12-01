@@ -1,0 +1,70 @@
+.upload-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 25px;
+    color: #fff;
+}
+
+.upload-box{
+    padding: 5px;
+    width: 40vw;
+    height: 250px;
+    border: 2px dotted #226AF6;
+    border-radius: 10px;
+    font-family: 'Roboto Slab', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.upload-button {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    color: #ffffff;
+}
+
+.upload-icon {
+    justify-content: center;
+    display: flex;
+    padding: 5px;
+    color: #ffffff;
+}
+.upload-status {
+    justify-content: center;
+    display: flex;
+    padding: 5px;
+    color: #ffffff;
+}
+
+.upload-submit{
+    margin-top: 12px;
+}
+
+.upload-percent{
+    margin-top: 12px;
+}
+
+button {
+    transition: 0.7s;
+    background-color: #226AF6;
+    border: 1px solid #226AF6;
+    color: #fff;
+    padding: 10px;
+    font-family: 'Roboto Slab', sans-serif;
+    text-align: center;
+    border-radius: 5px;
+}
+
+button:hover{
+    transition: 0.7s;
+    background-color: #12419f;
+    border: 1px solid #226AF6;
+    color: #fff;
+    padding: 10px;
+    font-family: 'Roboto Slab', sans-serif;
+    text-align: center;
+    border-radius: 5px;
+}
