@@ -1,0 +1,48 @@
+.main-infer {
+    background-color: #1E1E1E;
+    height: 100%;
+}
+
+.topics {
+    display: flex;
+    flex-direction: row;
+}
+
+
+#text-infer {
+    font-size: large;
+    color: #66FF75;
+}
+
+#title {
+    font-size: large;
+    color: white;
+}
+
+.topic-infer {
+    background-color: #226AF6;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 1px;
+}
+
+.timeline {
+    color: white;
+    border-right: 2px solid #226AF6;
+    width: 3vw;
+}
+
+.time {
+    margin: 10px;
+}
+
+.item {
+    color: white;
+    font-size: small;
+    background-color: #226AF6;
+    margin: 18px;
+    border-radius: 5px;
+    width: fit-content;
+    padding-left: 10px;
+    max-width: 50vw;
+}

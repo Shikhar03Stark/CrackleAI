@@ -58,7 +58,7 @@ function FileUpload() {
     <div className="upload-container">
       <div className="upload-box" onClick={e => inputRef.current.click()}>
         <div className="upload-button">
-          <button onClick={e => inputRef.current.click()}>Drag or Browse .MP4 video here</button>
+          <button onClick={e => e.preventDefault()}>Drag or Browse .MP4 video here</button>
           <input type="file" ref={inputRef} name="file" accept=".mp4" onChange={changeHandler} style={{display: "none"}}/>
         </div>
         <div className="upload-icon">
