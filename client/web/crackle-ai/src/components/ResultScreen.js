@@ -1,7 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import socketIOClient from 'socket.io-client'
 import { useLocation } from 'react-router-dom'
-import axios from 'axios';
+import Loader from './Loader';
+import "./ResultScreen.css";
+import Inference from './Inference';
+import dummyData from "../demoData";
 
 const serverURL = "http://localhost:5000/result";
 
@@ -10,8 +13,6 @@ export default function ResultScreen() {
   let file = page_state.state.filename;
 
   const stages = ['processing', 'chunking', 'asr', 'segmentation', 'naming', 'headline', 'done']
-
-  const [display, setDisplay] = useState('');
 
   const [result, setResult] = useState(null);
 
@@ -37,76 +38,72 @@ export default function ResultScreen() {
     socket.on('connect', () => {
       console.log(`Connected on ws`);
 
-      socket.emit('infer', {data: {filename: file}});
+      socket.emit('infer', { data: { filename: file } });
 
-      
-      
+
+
     });
     socket.on('test', (data) => {
       console.log(data);
     });
     socket.on('processing', (data) => {
       setStage('processing');
-      setDisplay(data.message);
+
       console.log(data);
     });
 
     socket.on('processing_done', (data) => {
-      setStage('chunking');
+      setStage('processing_done');
       setTotalLength(data.size);
-      setDisplay(data.message);
       console.log(data);
     });
 
     socket.on('chunking_done', (data) => {
-      setStage('asr');
+      setStage('chunking_done');
       setChunks(data.chunks);
-      setDisplay(data.message);
       console.log(data);
     });
 
     socket.on('asr_status', (data) => {
+      setStage('asr_status');
       setAsrProgress(data.current);
       console.log(data);
     });
 
     socket.on('asr_done', (data) => {
-      setStage('segmentation');
-      setDisplay(data.message);
+      setStage('asr_done');
       console.log(data);
     });
 
     socket.on('segmentation_done', (data) => {
-      setStage('naming');
+      setStage('segmentation_done');
       setTopics(data.topics);
-      setDisplay(data.message);
       console.log(data);
     });
 
     socket.on('naming_status', (data) => {
+      setStage('naming_status')
       setNamingProgress(data.current);
       console.log(data);
     });
 
     socket.on('naming_done', (data) => {
-      setStage('headline');
-      setDisplay(data.message);
-      console.log(data);
+      setStage('naming_done');
+      console.log('naming done', data);
     });
-    
+
     socket.on('headline_done', (data) => {
-      setStage('done');
+      setStage('headline_done');
       setHeadline(data.headline);
-      setDisplay(data.message);
-      console.log(data);
+      console.log('headline done', data);
     });
 
     socket.on('done', (data) => {
       setStage('done');
       setDone(true);
-      setDisplay(data.message);
       setResult(data.data);
-      console.log(data);
+      console.log('done', data);
+      console.log(result);
     });
 
     return () => socket.disconnect();
@@ -114,18 +111,20 @@ export default function ResultScreen() {
 
   return (
     <>
-      <h1>{done ? (display) : ('Loading...')}</h1>
-      <div>
-        <h2>Stage: {stage}</h2>
-        {stage === 'processing' && <p>{display}</p>}
-        {stage === 'chunking' && <p>{display} {chunks} chunks</p>}
-        {stage === 'asr' && <p>{display} {asrProgress}/{chunks} chunks done</p>}
-        {stage === 'segmentation' && <p>{display} {topics} topics</p>}
-        {stage === 'naming' && <p>{display} {namingProgress}/{topics} topics done</p>}
-        {stage === 'headline' && <p>{display} {headline}</p>}
-        {stage === 'done' && <p>{display}</p>}
+      <div className='parent-bg'>{done ? (<Inference data={result} file={file} />) : (<div className='parent-loader'>
+
+        {stage === 'processing' && <Loader load_state={{ stage: stage, count: 0, total: 0 }} />}
+        {stage === 'processing_done' && <Loader load_state={{ stage: stage, count: 0, total: 0 }} />}
+        {stage === 'chunking_done' && <Loader load_state={{ stage: stage, count: 0, total: chunks }} />}
+        {stage === 'asr_status' && <Loader load_state={{ stage: stage, count: asrProgress, total: chunks }} />}
+        {stage === 'asr_done' && <Loader load_state={{ stage: stage, count: 0, total: 0 }} />}
+        {stage === 'segmentation_done' && <Loader load_state={{ stage: stage, count: 0, total: topics }} />}
+        {stage === 'naming_status' && <Loader load_state={{ stage: stage, count: namingProgress, total: topics }} />}
+        {stage === 'naming_done' && <Loader load_state={{ stage: stage, count: 0, total: 0 }} />}
         {done && console.log(result)}
+      </div>)}
       </div>
+
     </>
   );
 }
