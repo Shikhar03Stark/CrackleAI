@@ -73,8 +73,9 @@ def infer(payload):
             idx = 0
             for topic in topics:
                 title = inference.retry_query_headline(topic)[1]['generated_text']
+                summary = inference.retry_query_summary(topic)[1]['summary']
                 emit('naming_status', {'current': idx+1}, namespace='/result')
-                output.append({'start': topic_timestamps[idx], 'topic': title, 'content': topic})
+                output.append({'start': topic_timestamps[idx], 'topic': title, 'content': topic, 'summary': summary})
                 idx += 1
 
             text = ' '.join(transcript)

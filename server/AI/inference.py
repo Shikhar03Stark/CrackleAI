@@ -16,7 +16,7 @@ def retry_query_asr(filename, retries=10, increments=2, max_wait=20):
     Retires untill 200 response is recieved with geometrically increasing intervals
     Dies after threshold tries tries.
     """
-    API_URL = "https://api-inference.huggingface.co/models/facebook/wav2vec2-large-960h-lv60-self"
+    API_URL = os.getenv("URL_ASR")
     headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
     req_count = 0
     wait_time = 1
@@ -42,12 +42,46 @@ def retry_query_asr(filename, retries=10, increments=2, max_wait=20):
 
     return (status, {'text': ''})
 
+
+def retry_query_summary(input, retries=10, increments=2, max_wait=20):
+    """
+    Retires untill 200 response is recieved with geometrically increasing intervals
+    Dies after threshold tries tries.
+    """
+    API_URL = os.getenv("URL_SUMMARY")
+    headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
+    req_count = 0
+    wait_time = 1
+    status = 0
+
+
+    while(req_count <= retries):
+        response = requests.request("POST", API_URL, headers=headers, json={'inputs':input})
+        status = response.status_code
+        print('HEAD', status, response.content, f'wt = {wait_time}', f'rc = {req_count}')
+        if status//100 == 2:
+            return (status, {'summary':response.json()[0]['summary_text']})
+        if status//100 == 4:
+            return (status, {'summary': ''})
+        #wait for next call
+        print(f"Failed. waiting for {wait_time}s. ({req_count+1})")
+        time.sleep(wait_time)
+        wait_time *= increments
+        wait_time = min(max_wait, wait_time)
+        req_count += 1
+
+    return (status, {'summary': ''})
+
+def generate_summary(topic):
+    return retry_query_summary(topic)[1]['summary']
+
+
 def retry_query_headline(input, retries=10, increments=2, max_wait=20):
     """
     Retires untill 200 response is recieved with geometrically increasing intervals
     Dies after threshold tries tries.
     """
-    API_URL = "https://api-inference.huggingface.co/models/Michau/t5-base-en-generate-headline"
+    API_URL = os.getenv("URL_HEADLINE")
     headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
     req_count = 0
     wait_time = 1
@@ -72,7 +106,7 @@ def retry_query_headline(input, retries=10, increments=2, max_wait=20):
     return (status, {'generated_text': ''})
 
 def retry_query_similarity(source_sent, compare_sents, retries=10, increments=2, max_wait=20):
-    API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+    API_URL = os.getenv("URL_SIMILARITY")
     headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
     req_count = 0
     wait_time = 1
@@ -221,7 +255,8 @@ if __name__ == '__main__':
     idx = 0
     for topic in topics:
         title = retry_query_headline(topic)[1]['generated_text']
-        output.append((topic_timestamps[idx], title, topic))
+        summary = generate_summary(topic)
+        output.append((topic_timestamps[idx], title, topic, summary))
         idx += 1
 
     print(output)
